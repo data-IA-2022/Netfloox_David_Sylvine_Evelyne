@@ -6,6 +6,7 @@ import os, glob
 
 # main function
 def main():
+    # open config.yaml
     with open('config.yaml', 'r') as file:
         config = yaml.safe_load(file)
         
@@ -17,9 +18,10 @@ def main():
     
     engine = create_engine(url)
     
-    conv = lambda x: x.replace('//N', np.nan) 
+    conv = lambda x: x.replace('//N', np.nan) # put NaN
+    
     # engine = create_engine(url)
-    path = '/home/dakoro/Data_IA/TP/Netfloox_David_Sylvine_Evelyne/datasets'
+        
     # load with pandas 
     conv = lambda x: np.nan if x == '\\N' else x
     tab_list = []
@@ -27,18 +29,18 @@ def main():
     for fn in glob.glob("*.gz"):
         tab_list.append('_'.join(fn.split('.')[:2]))
     print(tab_list)
-    c = 0
+    index = 0
     for fn in glob.glob("*.gz"):
         df = pd.read_csv(fn, sep='\t', compression='gzip', chunksize=100000)
         i = 0
         for chunk in df:
             chunk.applymap(conv)
             if i == 0:
-                chunk.to_sql(tab_list[c], engine, if_exists='replace')
+                chunk.to_sql(tab_list[index], engine, if_exists='replace')
             else:
-                chunk.to_sql(tab_list[c], engine, if_exists='append')
+                chunk.to_sql(tab_list[index], engine, if_exists='append')
             i += 1
-            print(f"{tab_list[c]}----{i}")
+            print(f"{tab_list[index]}----{i}")
         c += 1
 
 if __name__ == '__main__':
