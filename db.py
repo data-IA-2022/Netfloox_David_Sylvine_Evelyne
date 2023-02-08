@@ -1,7 +1,10 @@
 from sqlalchemy import create_engine
 import pandas as pd
+import numpy as np
 import yaml
+import os, glob
 
+# main function
 def main():
     with open('config.yaml', 'r') as file:
         config = yaml.safe_load(file)
@@ -11,27 +14,32 @@ def main():
 
     url = "{driver}://{user}:{password}@{host}/{database}".format(**cfg)
     print('URL', url)
-
+    
     engine = create_engine(url)
-
+    
+    conv = lambda x: x.replace('//N', np.nan) 
+    # engine = create_engine(url)
+    path = '/home/dakoro/Data_IA/TP/Netfloox_David_Sylvine_Evelyne/datasets'
     # load with pandas 
-    names = pd.read_csv('https://datasets.imdbws.com/name.basics.tsv.gz', compression='gzip', sep='\t', nrows=1000)
-    title = pd.read_csv('https://datasets.imdbws.com/title.akas.tsv.gz', compression='gzip', sep='\t', nrows=1000)
-    basics = pd.read_csv('https://datasets.imdbws.com/title.basics.tsv.gz', compression='gzip', sep='\t', nrows=1000)
-    crew = pd.read_csv('https://datasets.imdbws.com/title.crew.tsv.gz', compression='gzip', sep='\t', nrows=1000)
-    episode = pd.read_csv('https://datasets.imdbws.com/title.episode.tsv.gz', compression='gzip', sep='\t', nrows=1000)
-    principals = pd.read_csv('https://datasets.imdbws.com/title.principals.tsv.gz', compression='gzip', sep='\t', nrows=1000)
-    ratings = pd.read_csv('https://datasets.imdbws.com/title.ratings.tsv.gz', compression='gzip', sep='\t', nrows=1000)
-
-    # sent data to database
-    names.to_sql('names', engine, if_exists='replace')
-    title.to_sql('title_akas', engine, if_exists='replace')
-    basics.to_sql('title_basics', engine, if_exists='replace')
-    crew.to_sql('title_crew', engine, if_exists='replace')
-    principals.to_sql('title_principals', engine, if_exists='replace')
-    ratings.to_sql('title_ratings', engine, if_exists='replace')
-    episode.to_sql('title_episode', engine, if_exists='replace')
-    print("Data sent to database")
+    conv = lambda x: np.nan if x == '\\N' else x
+    tab_list = []
+    os.chdir("datasets")
+    for fn in glob.glob("*.gz"):
+        tab_list.append('_'.join(fn.split('.')[:2]))
+    print(tab_list)
+    c = 0
+    for fn in glob.glob("*.gz"):
+        df = pd.read_csv(fn, sep='\t', compression='gzip', chunksize=100000)
+        i = 0
+        for chunk in df:
+            chunk.applymap(conv)
+            if i == 0:
+                chunk.to_sql(tab_list[c], engine, if_exists='replace')
+            else:
+                chunk.to_sql(tab_list[c], engine, if_exists='append')
+            i += 1
+            print(f"{tab_list[c]}----{i}")
+        c += 1
 
 if __name__ == '__main__':
     main()
