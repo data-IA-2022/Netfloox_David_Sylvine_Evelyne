@@ -18,30 +18,37 @@ def main():
     
     engine = create_engine(url)
     
-    conv = lambda x: x.replace('//N', np.nan) # put NaN
+   
     
-    # engine = create_engine(url)
         
     # load with pandas 
-    conv = lambda x: np.nan if x == '\\N' else x
+    conv1 = lambda x: np.nan if x == '\\N' else x # put NaN
     tab_list = []
     os.chdir("datasets")
     for fn in glob.glob("*.gz"):
         tab_list.append('_'.join(fn.split('.')[:2]))
     print(tab_list)
     index = 0
-    for fn in glob.glob("*.gz"):
-        df = pd.read_csv(fn, sep='\t', compression='gzip', chunksize=100000)
+    fns = glob.glob("*.gz")
+    for fn in fns :
         i = 0
+        print(fn)
+        condition = (fn == fns[0] or fn == fns[1] or fn == fns[2])
+        if condition:
+            i += 1
+            index += 1
+            continue
+        df = pd.read_csv(fn, sep='\t', compression='gzip', encoding='utf-8', low_memory=False, chunksize=100000)
+        
         for chunk in df:
-            chunk.applymap(conv)
+            chunk.applymap(conv1)
             if i == 0:
                 chunk.to_sql(tab_list[index], engine, if_exists='replace')
             else:
                 chunk.to_sql(tab_list[index], engine, if_exists='append')
             i += 1
             print(f"{tab_list[index]}----{i}")
-        c += 1
+        index += 1
 
 if __name__ == '__main__':
     main()
