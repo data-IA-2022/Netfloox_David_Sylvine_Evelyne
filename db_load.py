@@ -33,7 +33,7 @@ def main():
     for fn in fns :
         i = 0
         print(fn)
-        condition = (fn == fns[0] or fn == fns[1] or fn == fns[2])
+        condition = (fn == fns[2]) # fichier 3 génère un erreur, il sera ajouter séparement
         if condition:
             i += 1
             index += 1
