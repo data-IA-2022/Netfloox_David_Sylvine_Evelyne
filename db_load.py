@@ -18,30 +18,25 @@ def main():
     
     engine = create_engine(url)
     
-   
-    
-        
     # load with pandas 
     conv1 = lambda x: np.nan if x == '\\N' else x # put NaN
     tab_list = []
     os.chdir("datasets")
-    for fn in glob.glob("*.gz"):
+    fns = glob.glob("*.gz")
+    fns = [fns[0], fns[3], fns[5]]
+    for fn in fns:
         tab_list.append('_'.join(fn.split('.')[:2]))
     print(tab_list)
     index = 0
-    fns = glob.glob("*.gz")
+    
     for fn in fns :
         i = 0
         print(fn)
-        condition = (fn == fns[2]) # fichier 3 génère un erreur, il sera ajouter séparement
-        if condition:
-            i += 1
-            index += 1
-            continue
+        
         df = pd.read_csv(fn, sep='\t', compression='gzip', encoding='utf-8', low_memory=False, chunksize=100000)
         
         for chunk in df:
-            chunk.applymap(conv1)
+            chunk = chunk.applymap(conv1)
             if i == 0:
                 chunk.to_sql(tab_list[index], engine, if_exists='replace')
             else:
@@ -49,6 +44,6 @@ def main():
             i += 1
             print(f"{tab_list[index]}----{i}")
         index += 1
-
+    print("data sent to database")
 if __name__ == '__main__':
     main()
