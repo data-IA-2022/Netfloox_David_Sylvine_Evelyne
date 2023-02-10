@@ -22,11 +22,10 @@ def main():
     tab_list = []
     os.chdir("datasets")
     fns = glob.glob("*.gz")
-    for fn in fns:
-        tab_list.append('_'.join(fn.split('.')[:2]))
-    print(tab_list)
+    
     for fn in fns :
-        print(fn)
+        name = '_'.join(fn.split('.')[:2])
+        print(name)
         df = pd.read_csv(fn, 
                          sep='\t', 
                          compression='gzip', 
@@ -38,14 +37,12 @@ def main():
         i = 0
         for chunk in df:
             chunk = chunk.applymap(conv1)
-            if fn != fns[1]:
-                continue
             if i == 0:
-                chunk.to_sql('title_akas', engine, if_exists='replace')
+                chunk.to_sql(name, engine, if_exists='replace')
             else:
-                chunk.to_sql('title_akas', engine, if_exists='append')
+                chunk.to_sql(name, engine, if_exists='append')
             i += 1
-            print(f"title_akas----{i}")
+            print(f"{name}----{i}")
     print("data sent to database")
 if __name__ == '__main__':
     main()
