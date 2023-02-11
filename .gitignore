@@ -134,3 +134,4 @@ config.yaml
 datasets
 
 .vscode
+netfloox.session.sql
