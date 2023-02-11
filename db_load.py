@@ -19,15 +19,17 @@ def main():
     engine = create_engine(url)
     # load with pandas 
     conv1 = lambda x: np.nan if x == '\\N' else x # put NaN
-    tab_list = []
     os.chdir("datasets")
     fns = glob.glob("*.gz")
     
     for fn in fns :
         name = '_'.join(fn.split('.')[:2])
         print(name)
+        if name != 'title_akas':
+            continue
         df = pd.read_csv(fn, 
-                         sep='\t', 
+                         index_col=0,
+                         sep='\t',
                          compression='gzip', 
                          encoding='utf-8', 
                          low_memory=False, 
