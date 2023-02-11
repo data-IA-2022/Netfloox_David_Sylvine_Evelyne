@@ -1,3 +1,7 @@
-select * from title_akas 
-A left join title_basics F ON (A."titleId"=F.tconst) 
-Where F.tconst IS NULL Limit 10;
+DELETE FROM title_akas 
+where "titleId"
+IN (SELECT "titleId"
+    FROM title_akas ta
+    LEFT JOIN title_basics tb 
+    ON ta."titleId" = tb.tconst 
+    WHERE tb.tconst IS NULL);

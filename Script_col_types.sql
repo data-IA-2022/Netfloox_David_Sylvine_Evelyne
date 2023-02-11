@@ -5,6 +5,7 @@ ALTER TABLE public.name_basics ALTER COLUMN "birthYear" TYPE int USING "birthYea
 ALTER TABLE public.name_basics ALTER COLUMN "deathYear" TYPE int USING "deathYear"::int;
 ALTER TABLE public.name_basics ALTER COLUMN "primaryProfession" TYPE varchar(66) USING "primaryProfession"::varchar;
 ALTER TABLE public.name_basics ALTER COLUMN "knownForTitles" TYPE varchar(64) USING "knownForTitles"::varchar;
+ALTER TABLE public.name_basics ALTER COLUMN "knownForTitles2" TYPE varchar(10)[] USING "knownForTitles2"::varchar;
 
 ALTER TABLE public.title_akas ALTER COLUMN "titleId" TYPE varchar(10) USING "titleId"::varchar;
 ALTER TABLE public.title_akas ALTER COLUMN title TYPE varchar(831) USING title::varchar;
@@ -29,6 +30,8 @@ ALTER TABLE public.title_crew ALTER COLUMN writers TYPE varchar(13434) USING wri
 
 ALTER TABLE public.title_episode ALTER COLUMN tconst TYPE varchar(10) USING tconst::varchar;
 ALTER TABLE public.title_episode ALTER COLUMN "parentTconst" TYPE varchar(10) USING "parentTconst"::varchar;
+ALTER TABLE public.title_episode ALTER COLUMN "seasonNumber" TYPE int USING "seasonNumber"::int;
+ALTER TABLE public.title_episode ALTER COLUMN "episodeNumber" TYPE int USING "episodeNumber"::int;
 
 ALTER TABLE public.title_principals ALTER COLUMN tconst TYPE varchar(10) USING tconst::varchar;
 ALTER TABLE public.title_principals ALTER COLUMN nconst TYPE varchar(10) USING nconst::varchar;
@@ -37,6 +40,5 @@ ALTER TABLE public.title_principals ALTER COLUMN job TYPE varchar(286) USING job
 ALTER TABLE public.title_principals ALTER COLUMN "characters" TYPE varchar(1308) USING "characters"::varchar;
 
 ALTER TABLE public.title_ratings ALTER COLUMN tconst TYPE varchar(10) USING tconst::varchar;
-
 
 
