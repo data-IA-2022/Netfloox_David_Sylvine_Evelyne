@@ -40,5 +40,3 @@ ALTER TABLE public.title_principals ALTER COLUMN job TYPE varchar(286) USING job
 ALTER TABLE public.title_principals ALTER COLUMN "characters" TYPE varchar(1308) USING "characters"::varchar;
 
 ALTER TABLE public.title_ratings ALTER COLUMN tconst TYPE varchar(10) USING tconst::varchar;
-
-
