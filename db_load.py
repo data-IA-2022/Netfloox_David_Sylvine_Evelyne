@@ -11,7 +11,6 @@ def main():
         config = yaml.safe_load(file)
         
     cfg=config['PG']
-    print(cfg)
 
     url = "{driver}://{user}:{password}@{host}/{database}".format(**cfg)
     print('URL', url)
