@@ -25,7 +25,7 @@ def main():
     for fn in fns :
         name = '_'.join(fn.split('.')[:2])
         print(name)
-        if name != 'title_akas':
+        if name != 'title_crew':
             continue
         df = pd.read_csv(fn, 
                          index_col=0,
