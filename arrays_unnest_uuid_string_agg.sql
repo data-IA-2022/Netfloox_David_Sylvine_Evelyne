@@ -31,7 +31,22 @@ CREATE TABLE grouped_name_basics AS (SELECT "knownForTitles", STRING_AGG(nconst,
 
 /* Vérification du nombre de tconsts une fois l'aggrégation faite */
 SELECT COUNT(DISTINCT tconst) FROM grouped_name_basics;
+SELECT COUNT(*) FROM grouped_name_basics;
 
 /* Left Join de title_basics avec la table grouped_name_basics créée au-dessus */
 SELECT "primaryTitle", tconst, genres, nconst FROM title_basics A LEFT JOIN grouped_name_basics B ON (A.tconst=B."knownForTitles") WHERE "titleType"='movie';
+
+
+/* Table créant des acteurs et actrices (nconsts) aggrégés par tconst unique */
+CREATE VIEW actors_sel AS (SELECT * FROM title_principals WHERE category = 'actor' OR category = 'actress');
+CREATE TABLE tconst_actors AS (SELECT tconst, STRING_AGG(nconst,',') AS actors FROM actors_sel GROUP BY tconst);
+/* Vérification du nombre de tconsts une fois l'aggrégation faite */
+SELECT COUNT(DISTINCT tconst) FROM tconst_actors;
+SELECT COUNT(*) FROM tconst_actors;
+
+
+
+
+
+
 
