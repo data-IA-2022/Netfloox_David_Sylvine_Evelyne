@@ -6,10 +6,8 @@ Created on Mon Feb  6 15:24:19 2023
 @author: sylvine
 """
 
-from sqlalchemy import create_engine
 from sqlalchemy.types import Integer
 import pandas as pd
-import os, yaml 
 import numpy as np
 
 
@@ -29,17 +27,7 @@ import numpy as np
 #     ("postgres", "greta2023", host, 'test'))
 
 # Soit en utilisant config yaml pour stocker les infos sur un fichier qu'on ne mettra pas sur github
-with open('config.yaml', 'r') as file:
-    config = yaml.safe_load(file)
-print(config)
-
-cfg=config['PG']
-print(cfg)
-
-url = "{driver}://{user}:{password}@{host}/{database}".format(**cfg)
-print('URL', url)
-
-engine = create_engine(url)
+engine=utils.get_engine()
 
 files=['name.basics', 'title.akas', 'title.basics', 'title.crew', 'title.episode', 'title.principals', 'title.ratings']
 

@@ -1,21 +1,11 @@
-from sqlalchemy import create_engine
 import pandas as pd
 import numpy as np
-import yaml
 import os, glob
+import utils
 
 # main function
 def main():
-    # open config.yaml
-    with open('config.yaml', 'r') as file:
-        config = yaml.safe_load(file)
-        
-    cfg=config['PG']
-
-    url = "{driver}://{user}:{password}@{host}/{database}".format(**cfg)
-    print('URL', url)
-    
-    engine = create_engine(url)
+    engine=utils.get_engine()
     # load with pandas 
     conv1 = lambda x: np.nan if x == '\\N' else x # put NaN
     os.chdir("datasets")
