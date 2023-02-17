@@ -45,8 +45,5 @@ SELECT COUNT(DISTINCT tconst) FROM tconst_actors;
 SELECT COUNT(*) FROM tconst_actors;
 
 
-
-
-
-
-
+/* Table final_table_basics avec la date exprimée en décennie */
+CREATE TABLE final_title_basics AS (SELECT tconst, "titleType", "primaryTitle", "originalTitle", "isAdult", "startYear"/10 AS decade, "runtimeMinutes", genres FROM title_basics WHERE "titleType"='movie');
