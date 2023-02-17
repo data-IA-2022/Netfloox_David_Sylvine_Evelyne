@@ -19,5 +19,9 @@ def test_config_content():
 
 
 def test_engine():
+    '''
+    Tests la bonne création de l'engine
+    :return:
+    '''
     engine = utils.get_engine()
     assert engine is not None
