@@ -9,7 +9,7 @@ Created on Mon Feb  6 15:24:19 2023
 from sqlalchemy.types import Integer
 import pandas as pd
 import numpy as np
-
+import utils
 
 
 # creation de la BDD MySaQL
@@ -56,9 +56,9 @@ for name in files:
     for df in reader:
         df = df.applymap(conv)
         if chunk == 1:
-        	df.to_sql(name.replace('.', '_'), engine, if_exists='replace') 
+            df.to_sql(name.replace('.', '_'), engine, if_exists='replace')
         else:
-        	df.to_sql(name.replace('.', '_'), engine, if_exists='append') 
+            df.to_sql(name.replace('.', '_'), engine, if_exists='append') 
         print(f"table {name} chunk {chunk} done")
         chunk += 1
 
