@@ -28,8 +28,6 @@ def main(film):
 
     df.fillna(value='', inplace=True)
 
-    
-
     df['movie_features'] = df.apply(concat_features, axis=1)
 
     # Déclaration de la méthode de vectorisation et application
@@ -49,7 +47,6 @@ def main(film):
 
     # Sélection des 5 films les plus similaires
     similarities = similarities.sort_values(by=[0], ascending=False)
-    print(similarities)
     film_list = similarities['primaryTitle'].tolist()[1:6]
 
     return film_list
