@@ -1,0 +1,232 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Fri Feb 17 14:12:08 2023
+
+@author: sylvine
+"""
+
+
+from sqlalchemy import create_engine
+import pandas as pd
+import yaml 
+import matplotlib.pyplot as plt
+from sklearn.feature_extraction.text import CountVectorizer
+import seaborn as sns
+
+# configuration de la connexion
+with open('config.yaml', 'r') as file:
+    config = yaml.safe_load(file)
+print(config)
+
+cfg=config['PG']
+print(cfg)
+
+url = "{driver}://{user}:{password}@{host}/{database}".format(**cfg)
+print('URL', url)
+
+engine = create_engine(url)
+
+####################################################
+# fonction pour afficher les 10 "qqch" les plus prolifiques
+# lancer une fois qu'on a déjà les df qui nous intéressent
+def graphe_dix_plus_prolifique(df_job):
+    df_merge1 = pd.merge(df_job, df_names, how='inner', on='nconst')
+    df_merge2 = pd.merge(df_merge1, df_movies, on='tconst', how='inner')
+    
+    df_gb = df_merge2.groupby('nconst').size()
+    df_gb = df_gb.reset_index()
+    df_gb.columns = ['nconst','count']
+        
+    df_final = pd.merge(df_gb, df_names, on='nconst', how='inner')
+    df_final.head()
+    
+    df_final.sort_values("count", ascending=False).head()
+    
+    tableau = df_final.sort_values("count", ascending=False)
+    
+    noms = tableau['primaryName'].head(10)
+    comptage = tableau['count'].head(10)
+    
+    plt.barh(noms, comptage)
+
+
+###########################################
+# EDA
+
+# 10 plus prolifiques
+df_movies = pd.read_sql("""
+                        select distinct tconst from title_basics
+                        where "titleType" = 'movie';
+                        """, engine)
+
+df_names = pd.read_sql("""
+                       select nb.nconst, nb."primaryName" from name_basics nb;
+                       """, engine)
+
+
+# producteurs
+df_producer = pd.read_sql("""
+                          select tconst, nconst from title_principals tp
+                          where tp.category = 'producer';
+                          """, engine)    
+graphe_dix_plus_prolifique(df_producer)
+
+# Acteurs FAIT PLANTER LE KERNEL
+df_actor = pd.read_sql("""
+                          select tconst, nconst from title_principals tp
+                          where tp.category = 'actor' or tp.category = 'actress';
+                          """, engine)
+
+
+# juste acteur homme # NE MARCHE PAS, A RELANCER AILLEURS ??
+df_actor = pd.read_sql("""
+                          select tconst, nconst from title_principals tp
+                          where tp.category = 'actor';
+                          """, engine)
+graphe_dix_plus_prolifique(df_actor)
+
+# juste actrice
+df_actress = pd.read_sql("""
+                          select tconst, nconst from title_principals tp
+                          where tp.category = 'actress';
+                          """, engine)
+graphe_dix_plus_prolifique(df_actress)   
+                          
+# Réalisateurs 
+df_director = pd.read_sql("""
+                          select tconst, nconst from title_principals tp
+                          where tp.category = 'director' ;
+                          """, engine)
+graphe_dix_plus_prolifique(df_director)
+
+# Scénaristes
+df_writer = pd.read_sql("""
+                          select tconst, nconst from title_principals tp
+                          where tp.category = 'writer' ;
+                          """, engine)
+graphe_dix_plus_prolifique(df_writer)
+
+
+###########################################
+#-------------------------------------------
+# Popularité des films
+#-------------------------------------------
+
+# tous genres confondus, minimum de 200 votes
+# df_popular_tous = pd.read_sql("""
+#                           select * from title_ratings tr 
+#                           inner join title_basics tb 
+#                           on (tr.tconst = tb.tconst) 
+#                           where "numVotes" > 200
+#                           order by "averageRating" desc 
+#                           limit 10 ;
+#                           """, engine)
+# df_popular_tous
+
+# df
+df_popular = pd.read_sql("""
+                         select * from title_ratings tr 
+                         inner join title_basics tb 
+                         on (tr.tconst = tb.tconst) 
+                         order by "averageRating" desc ;
+                         """, engine)
+df_popular.shape 
+
+#nb de votes pour chaque film
+# sns.histplot(data=df_popular, x="numVotes") # FAIT PLANTER LE PC
+
+df_popular.numVotes.describe()
+# le film le plus upvoté a plus de 2 millions de votes
+
+plt.hist(df_popular.numVotes, bins = 100)
+plt.ylim(0, 500)
+
+plt.boxplot(df_popular.numVotes)
+
+#######################################################
+# TENTATIVES D'HISTOGRAMME INTERACTIF
+#######################################################
+
+#-----------------------------------------
+# avec graph_objs
+# imports
+import chart_studio.plotly  as py
+import plotly.graph_objs as go
+import numpy as np
+
+# set data
+x =df_popular.numVotes
+
+# Create figure and get reference to histogram trace
+fig = go.FigureWidget(
+    [go.Histogram(x=x)],
+    go.Layout(
+        title='Histogram du nombre de votes',
+        xaxis={'title': 'nombre de votes'},
+        yaxis={'title': 'count'},
+        bargap=0.05))
+hist = fig.data[0]
+
+# Install xaxis zoom callback
+def handle_zoom(xaxis, xrange):
+    filtered_x = x[np.logical_and(xrange[0] <= x, x <= xrange[1])]
+    hist.x = filtered_x
+fig.layout.xaxis.on_change(handle_zoom, 'range')
+
+# Display FigureWidget
+fig
+
+#-----------------------------------------
+# avec plotly
+import plotly.express as px
+fig = px.histogram(df_popular, x= "numVotes", color_discrete_sequence=['#AB63FA'], 
+                   opacity=.8, title='Nb de votes')
+fig.update_layout(bargap=0.2)
+fig.show()
+
+
+########################################################
+# répartition des types de films 
+
+df_types = df_popular.groupby("titleType").size()
+df_types
+df_types = df_types.reset_index()
+df_types.columns = ['titleType','count']
+df_types = df_types.sort_values(by = "count", ascending=False)
+plt.barh(df_types['titleType'], df_types['count'])
+
+
+########################################################
+# Répartition des genres de films et popularité
+df_popular.dropna(subset=["genres"], inplace=True)  # drop quand le genre est absent                    
+df_popular.columns                       
+
+cv = CountVectorizer(tokenizer=lambda x: x.split(','))
+genres_films = cv.fit_transform(df_popular['genres'])
+
+df_genres_films = pd.DataFrame(genres_films.toarray(), columns=cv.get_feature_names_out())
+
+df = pd.concat([df_popular, df_genres_films], axis=1)
+df.shape # 40 col, dont les 28 dernières des genres
+
+
+#create dataframe
+genres_res = pd.DataFrame(columns = ["genre","nb_films","averageRating"])
+                          
+for genre in cv.get_feature_names_out():
+    # truc = df.groupby(by=genre).size()
+    # print(truc)
+    df2 = df.loc[df[genre] == 1]
+    nb_films= df2[genre].sum() # calcule nb de films de chaque genre
+    avRat= df2["averageRating"].mean() # calcule pop moyenne par genre
+    print(f"{genre} : nb de film = {nb_films}, note moyenne = {avRat}")
+    genres_res.loc[len(genres_res.index)] = [genre, nb_films, avRat]
+genres_res
+
+plt.barh(genres_res.sort_values("nb_films", ascending=False)['genre'], genres_res.sort_values("nb_films", ascending=False)['nb_films'])
+plt.barh(genres_res.sort_values("averageRating", ascending=False)['genre'], genres_res.sort_values("averageRating", ascending=False)['averageRating'])
+
+
+
+
