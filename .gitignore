@@ -132,3 +132,7 @@ dmypy.json
 notes.md
 config.yaml
 dataset_Netfloox
+datasets
+
+.vscode
+netfloox.session.sql
