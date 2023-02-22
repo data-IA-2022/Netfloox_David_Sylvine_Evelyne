@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+    <div class="jumbotron jumbotron-fluid">
+        <div class="container-fluid">
+            {% include 'navbar.html' %}
+        </div>
+        <form method="post">
+            {% csrf_token %}
+            <label for="director">Choose a director:</label>
+            <select name="dir" id="director">
+                {% for item in directors  %}
+                    <option value="{{ item }}">{{ item }}</option>
+                {% endfor %}
+            </select><br>
+            <label for="actors">Choose a actor:</label>
+            <select name="actor" id="actors">
+                {% for item in actors  %}
+                    <option value="{{ item }}">{{ item }}</option>
+                {% endfor %}
+            </select><br>
+            <label for="actress">Choose a actress:</label>
+            <select name="actress" id="actress">
+                {% for item in actress  %}
+                    <option value="{{ item }}">{{ item }}</option>
+                {% endfor %}
+            </select><br>
+            <label for="genres">Choose a genres:</label>
+            <select name="genre" id="genres" required>
+                {% for item in genres  %}
+                    <option value="{{ item }}">{{ item }}</option>
+                {% endfor %}
+            </select><br>
+            <label for="time">movie's duration</label>
+            <input type="number" name="time" id="time" min="0" required><br>
+            <label for="decade">movie's decade</label>
+            <input type="number" name="decade" id="decade" min="0" required><br>
+            <input type="submit" value="Submit">
+        </form>
+        {% if prediction > 0 %}
+            <p id="prediction"> average rating : {{ prediction }}</p>
+        {% endif %}
+    </div>
+{% endblock content %}
