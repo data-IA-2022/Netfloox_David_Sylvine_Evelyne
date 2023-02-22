@@ -29,6 +29,8 @@ ALTER TABLE public.title_crew ALTER COLUMN writers TYPE varchar(13434) USING wri
 
 ALTER TABLE public.title_episode ALTER COLUMN tconst TYPE varchar(10) USING tconst::varchar;
 ALTER TABLE public.title_episode ALTER COLUMN "parentTconst" TYPE varchar(10) USING "parentTconst"::varchar;
+ALTER TABLE public.title_episode ALTER COLUMN "seasonNumber" TYPE int USING "seasonNumber"::int;
+ALTER TABLE public.title_episode ALTER COLUMN "episodeNumber" TYPE int USING "episodeNumber"::int;
 
 ALTER TABLE public.title_principals ALTER COLUMN tconst TYPE varchar(10) USING tconst::varchar;
 ALTER TABLE public.title_principals ALTER COLUMN nconst TYPE varchar(10) USING nconst::varchar;
