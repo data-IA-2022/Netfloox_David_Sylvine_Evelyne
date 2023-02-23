@@ -136,3 +136,8 @@ datasets
 
 .vscode
 netfloox.session.sql
+netfloox_app/data
+netfloox_app/netfloox_app/settings.py
+
+
+
