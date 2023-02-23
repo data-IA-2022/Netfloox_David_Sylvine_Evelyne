@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+
+    <div class="jumbotron jumbotron-fluid">
+        <div class="container-fluid">
+            {% include 'navbar.html' %}
+        </div>
+        <div class="graph">
+            <div class="actor-graph">
+                <img src="{% static 'img/graph/actor_proly.png' %}" alt="" id="actors-graph">
+                <button id="actors-graph-btn" onclick="show('actors-graph')">Actors with most roles</button>
+                <button id="actors-graph-btn" onclick="hide('actors-graph')">hide graph</button>
+            </div>
+            
+            <div class="actress-graph">
+                <img src="{% static 'img/graph/actress_proly.png' %}" alt="" id="actress-graph">
+                <button id="actors-graph-btn" onclick="show('actress-graph')">Actress with most roles</button>
+                <button id="actors-graph-btn" onclick="hide('actress-graph')">hide graph</button>
+            </div>
+            
+            <div class="directors-graph">
+                <img src="{% static 'img/graph/director_proly.png' %}" alt="" id="directors-graph">
+                <button id="actors-graph-btn" onclick="show('directors-graph')">Directors with most movies</button>
+                <button id="actors-graph-btn" onclick="hide('directors-graph')">hide graph</button>
+            </div>
+
+            <div class="types-graph">
+                <img src="{% static 'img/graph/types_dist.png' %}" alt="" id="types-graph">
+                <button id="actors-graph-btn" onclick="show('types-graph')">production per types</button>
+                <button id="actors-graph-btn" onclick="hide('types-graph')">hide graph</button>
+            </div>
+            
+            <div class="movies-genres-graph">
+                <img src="{% static 'img/graph/movies_genres.png' %}" alt="" id="movies-genres-graph">
+                <button id="actors-graph-btn" onclick="show('movies-genres-graph')">Number of movies per types</button>
+                <button id="actors-graph-btn" onclick="hide('movies-genres-graph')">hide graph</button>
+            </div>
+            
+            <div class="ratings-genres-graph">
+                <img src="{% static 'img/graph/ratings_genres.png' %}" alt="" id="ratings-genres-graph">
+                <button id="actors-graph-btn" onclick="show('ratings-genres-graph')">Average ratings per types</button>
+                <button id="actors-graph-btn" onclick="hide('ratings-genres-graph')">hide graph</button>
+            </div>
+
+            <div class="ratings-graph">
+                <img src="{% static 'img/graph/ratings_dist.png' %}" alt="" id="ratings-graph">
+                <button id="actors-graph-btn" onclick="show('ratings-graph')">Global raitngs distrubution</button>
+                <button id="actors-graph-btn" onclick="hide('ratings-graph')">hide graph</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        function show(imgId) {
+
+            /* Access image by id and change
+            the display property to block*/
+            document.getElementById(imgId)
+                    .style.display = "block";
+
+        }
+
+        function hide(imgId) {
+
+            /* Access image by id and change
+            the display property to none*/
+            document.getElementById(imgId)
+                    .style.display = "none";
+
+        }
+    </script
+
+{% endblock content %}

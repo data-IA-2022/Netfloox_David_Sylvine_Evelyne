@@ -6,7 +6,7 @@
         <div class="container-fluid">
             {% include 'navbar.html' %}
         </div>
-        <form method="post">
+        <form class='reco-form' method="post">
             {% csrf_token %}
             <label for="recommandation">Enter a film's title</label>
             <input type="text" name="recommandation" required>
