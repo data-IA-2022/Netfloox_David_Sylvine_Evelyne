@@ -1,0 +1,10 @@
+body{
+    background-color: #000000;
+    color: #ffffff;
+    font-family: 'Netflix Sans','Helvetica Neue',Helvetica,Arial,sans-serif;
+}
+
+#reco-link, #pop-link{
+    text-decoration: none !important;
+    color: red !important;
+}

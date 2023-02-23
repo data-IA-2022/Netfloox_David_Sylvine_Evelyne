@@ -12,9 +12,15 @@ df.drop(columns='tconst', inplace=True)
 
 df.fillna(value='', inplace=True)
 
+# Choix des features sur lesquelles la similarité sera basée
+
+# CountVectorizer ne reconnaît pas les mots contenant un seul caractère, donc il faut remplacer O et 1 par un groupe de caractères spécifique à la catégorie.
 df.isAdult.replace([0, 1], ['Rated_G_PG_PG-13_R', 'Rated_NC-17'], inplace=True)
+
+# Ce regroupement par périodes correspond à ce que recommandent les historiens du cinéma.
 df.decade.replace([202, 201, 200, 199, 198, 197, 196, 195, 194, 193, 192, 191, 190, 189], ['2020s', '2010s', '2000s', '1990s', '1980s', '1970s', '1960s', '1950s', '1940s', '1930s', '1920s', 'silent-era', 'silent-era', 'silent-era'], inplace=True)
 
+# Ici les 'nconst' correspondent à la catégorie 'knownForTitles' qui permet de sélectionner tous les contributeurs majeurs du film (acteurs, réalisateur, producteur, techniciens...) en bénéficiant de l'algorithme de ML utilisé par IMdB
 def concat_features(row):
     return(row['isAdult'] + " "+ row['decade'] + " "+ row['genres'].replace(",", " ") + " " + row['nconst'].replace(",", " "))
 

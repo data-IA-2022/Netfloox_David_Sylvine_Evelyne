@@ -1,0 +1,18 @@
+{% load static %}
+{% block navbar %}
+<div class="container-fluid">
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <a href="{% url 'home' %}" name="home">
+                <img src={% static "img/logo.png" %} width="150">
+            </a>
+            <a href="{% url 'reco' %}" name='reco' id="reco-link">
+                Recommandation
+            </a>
+            <a href="{% url 'pop' %}" name='pop' id="pop-link">
+                Popularity
+            </a>
+        </div>
+    </nav>
+</div>
+{% endblock %}
