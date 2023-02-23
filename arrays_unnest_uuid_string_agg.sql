@@ -48,3 +48,11 @@ SELECT COUNT(*) FROM tconst_actors;
 /* Table final_title_basics avec la date exprimée en décennie */
 CREATE TABLE final_title_basics AS (SELECT tconst, "titleType", "primaryTitle", "originalTitle", "isAdult", "startYear"/10 AS decade, "runtimeMinutes", genres FROM title_basics WHERE "titleType"='movie');
 
+/* Table title_ratings_sel pour sélectonner les films en fonction du nombre de votes */
+CREATE VIEW title_ratings_sel AS (SELECT tconst, "averageRating", "numVotes" FROM title_ratings WHERE "numVotes" >= 3000);
+SELECT COUNT(*) FROM title_ratings_sel;
+
+/* Table regroupant les films, "knownForTitles" et "averageRating" */
+CREATE VIEW basics_knownForTitles AS (SELECT tconst, "primaryTitle", "isAdult", decade, "runtimeMinutes", genres, nconst FROM final_title_basics A LEFT JOIN grouped_name_basics B ON (A.tconst=B."knownForTitles") WHERE "titleType"='movie');
+CREATE TABLE basics_knownForTitles_ratings AS (SELECT A.tconst, "primaryTitle", "isAdult", decade, "runtimeMinutes", genres, nconst, "averageRating", "numVotes" FROM basics_knownForTitles A INNER JOIN title_ratings_sel B ON (A.tconst=B.tconst));
+
