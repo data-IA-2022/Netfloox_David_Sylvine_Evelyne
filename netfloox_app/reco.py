@@ -9,26 +9,20 @@ def concat_features(row):
     
 def main(film):
     
-    # Récup des info de connection
-    with open('../config.yaml', 'r') as file:
-        config = yaml.safe_load(file)
-    #print(config)
+    df = pd.read_csv('../datasets/basics_knownForTitles_ratings.csv', index_col=0)
 
-    cfg=config['PG']
-
-    # Connection à BDD
-    url = "{driver}://{user}:{password}@{host}/{database}".format(**cfg)
-    engine = create_engine(url)
-
-    df = pd.read_sql("""SELECT "primaryTitle", tconst, genres, nconst 
-                     FROM title_basics A 
-                     LEFT JOIN grouped_name_basics B ON (A.tconst=B."knownForTitles") 
-                     WHERE "titleType"='movie';
-                     """, engine)
+    df.drop(columns='tconst', inplace=True)
 
     df.fillna(value='', inplace=True)
 
+    df.isAdult.replace([0, 1], ['Rated_G_PG_PG-13_R', 'Rated_NC-17'], inplace=True)
+    df.decade.replace([202, 201, 200, 199, 198, 197, 196, 195, 194, 193, 192, 191, 190, 189], 
+                      ['2020s', '2010s', '2000s', '1990s', '1980s', '1970s', '1960s', '1950s', '1940s', '1930s', '1920s', 
+                       'silent-era', 'silent-era', 'silent-era'], inplace=True)
+
+
     df['movie_features'] = df.apply(concat_features, axis=1)
+
 
     # Déclaration de la méthode de vectorisation et application
     cv = CountVectorizer()
@@ -48,6 +42,7 @@ def main(film):
     # Sélection des 5 films les plus similaires
     similarities = similarities.sort_values(by=[0], ascending=False)
     film_list = similarities['primaryTitle'].tolist()[1:6]
+
 
     return film_list
 

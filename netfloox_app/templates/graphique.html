@@ -9,37 +9,43 @@
         </div>
         <div class="graph">
             <div class="actor-graph">
-                <img src="{% static 'img/graph/actor_proly.png' %}" alt="" id="actors-graph">
+                <img src="{% static 'img/graph/acteurs.png' %}" alt="" id="actors-graph">
                 <button id="actors-graph-btn" onclick="show('actors-graph')">Actors with most roles</button>
                 <button id="actors-graph-btn" onclick="hide('actors-graph')">hide graph</button>
             </div>
             
             <div class="actress-graph">
-                <img src="{% static 'img/graph/actress_proly.png' %}" alt="" id="actress-graph">
+                <img src="{% static 'img/graph/actrices.png' %}" alt="" id="actress-graph">
                 <button id="actors-graph-btn" onclick="show('actress-graph')">Actress with most roles</button>
                 <button id="actors-graph-btn" onclick="hide('actress-graph')">hide graph</button>
             </div>
             
             <div class="directors-graph">
-                <img src="{% static 'img/graph/director_proly.png' %}" alt="" id="directors-graph">
+                <img src="{% static 'img/graph/realisateurs.png' %}" alt="" id="directors-graph">
                 <button id="actors-graph-btn" onclick="show('directors-graph')">Directors with most movies</button>
                 <button id="actors-graph-btn" onclick="hide('directors-graph')">hide graph</button>
             </div>
 
+            <div class="producers-graph">
+                <img src="{% static 'img/graph/producteurs.png' %}" alt="" id="producers-graph">
+                <button id="actors-graph-btn" onclick="show('producers-graph')">Producers with most movies</button>
+                <button id="actors-graph-btn" onclick="hide('producers-graph')">hide graph</button>
+            </div>
+
             <div class="types-graph">
-                <img src="{% static 'img/graph/types_dist.png' %}" alt="" id="types-graph">
-                <button id="actors-graph-btn" onclick="show('types-graph')">production per types</button>
+                <img src="{% static 'img/graph/types_media.png' %}" alt="" id="types-graph">
+                <button id="actors-graph-btn" onclick="show('types-graph')">Types distribution</button>
                 <button id="actors-graph-btn" onclick="hide('types-graph')">hide graph</button>
             </div>
             
             <div class="movies-genres-graph">
-                <img src="{% static 'img/graph/movies_genres.png' %}" alt="" id="movies-genres-graph">
+                <img src="{% static 'img/graph/nb_films_genre.png' %}" alt="" id="movies-genres-graph">
                 <button id="actors-graph-btn" onclick="show('movies-genres-graph')">Number of movies per types</button>
                 <button id="actors-graph-btn" onclick="hide('movies-genres-graph')">hide graph</button>
             </div>
             
             <div class="ratings-genres-graph">
-                <img src="{% static 'img/graph/ratings_genres.png' %}" alt="" id="ratings-genres-graph">
+                <img src="{% static 'img/graph/popularite_genre.png' %}" alt="" id="ratings-genres-graph">
                 <button id="actors-graph-btn" onclick="show('ratings-genres-graph')">Average ratings per types</button>
                 <button id="actors-graph-btn" onclick="hide('ratings-genres-graph')">hide graph</button>
             </div>
@@ -51,6 +57,15 @@
             </div>
         </div>
     </div>
+    
+    <footer class="page-footer font-small unique-color-dark">
+         <!-- Copyright -->
+      <div class="footer-copyright text-center py-3">© 2022 Copyright
+        <a href="https://github.com/data-IA-2022/Netfloox_David_Sylvine_Evelyne" target="_blank"> Django Netfloox</a>
+      </div>
+      <!-- Copyright -->
+
+    </footer>
     <script>
         function show(imgId) {
 

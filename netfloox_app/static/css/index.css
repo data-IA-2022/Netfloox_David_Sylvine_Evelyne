@@ -41,6 +41,13 @@ body{
     font-size: 35px;
 }
 
-#actors-graph, #actress-graph, #directors-graph, #movies-genres-graph, #ratings-genres-graph, #ratings-graph, #types-graph{
+#actors-graph, 
+#actress-graph, 
+#directors-graph, 
+#movies-genres-graph, 
+#ratings-genres-graph, 
+#ratings-graph, 
+#types-graph, 
+#producers-graph {
     display: none;
 }

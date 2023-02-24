@@ -2,10 +2,49 @@ from django.shortcuts import render
 from reco import main
 import pandas as pd
 import numpy as np
-import os 
-import pickle
+from sklearn.ensemble import GradientBoostingRegressor
+from sklearn.preprocessing import RobustScaler
+from sklearn.pipeline import Pipeline
+from sklearn.compose import ColumnTransformer
+from sklearn.model_selection import train_test_split, GridSearchCV
+from sklearn import metrics
+from sklearn.decomposition import TruncatedSVD
 from sklearn.feature_extraction.text import CountVectorizer
-# Create your views here.
+import os
+def load_model():
+    parameters = {'model__n_estimators': range(140, 150, 10), 'model__max_depth': range(6,7)}
+    df = pd.read_csv('data/basics_knownForTitles_ratings.csv', index_col=0)
+    (df.tconst.value_counts() == 1).all()
+    df = df.query('numVotes >= 375')
+    df = df.dropna()
+    df = df.query('isAdult == 0')
+    df = df.drop(columns=['tconst', 'primaryTitle','isAdult'], axis=1)
+    df['nconst'] = df['nconst'].str.replace(',', ' ')
+    df['genres'] = df['genres'].str.replace(',', ' ')   
+    column_num = ['decade', 'runtimeMinutes', 'numVotes']
+    transfo_num = Pipeline(steps=[
+        ('scaling', RobustScaler())
+    ])
+    column_tex1 = 'genres'
+    column_tex2 = 'nconst'
+    transfo_tex = Pipeline(steps=[
+        ('countvec', CountVectorizer()), 
+        ('dr', TruncatedSVD())    
+        ])
+    preparation = ColumnTransformer(
+        transformers=[
+            ('data_tex1', transfo_tex , column_tex1),
+            ('data_tex2', transfo_tex , column_tex2),
+            ('data_num', transfo_num , column_num)
+        ])
+    pipe = Pipeline(steps=[('preparation', preparation),
+                            ('model', GradientBoostingRegressor())])
+    grid = GridSearchCV(pipe, parameters, scoring='r2', cv = 5, n_jobs =-1, verbose = 1)
+    y = df['averageRating']
+    X = df.drop(columns='averageRating')
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4, random_state=0)
+    model = grid.fit(X_train, y_train)
+    return model
 
 def home(request):
     return render(request, 'index.html')
@@ -14,9 +53,11 @@ def reco(request):
     if request.method == 'POST':
         title = request.POST['recommandation']
         list_film = main(title)
+        phrase = f'Recommandatation pour le film intitulé : "{title}" '
         return render(request, 'recommandation.html', context={
             "reco": '\n'.join(list_film),
             "len" : len(list_film),
+            "phrase": phrase,
             })
     else:
         return render(request, 'recommandation.html')
@@ -39,7 +80,6 @@ def pop(request):
     
     
     if request.method == 'POST':
-        print(request.POST)
         producer = request.POST['producers']
         director = request.POST['dir']
         actor = request.POST['actor']
@@ -54,25 +94,18 @@ def pop(request):
         nconst_dir = df_dir[df_dir['director'] == director]
         nconst_producer = df_producer[df_producer['producer'] == producer]
         
-        print(nconst_actor["nconst"].iat[0])
-        print(nconst_actres)
-        print(nconst_dir)
-        print(nconst_producer)
         
         list_nconst = [nconst_actor['nconst'].iat[0],
                        nconst_actres['nconst'].iat[0],
                        nconst_producer['nconst'].iat[0],
                        nconst_dir['nconst'].iat[0],]
         list_nconst = ' '.join(list_nconst)
-        print(list_nconst)
-        pickle_file = open("model_reg.pkl", "rb")
-        model = pickle.load(pickle_file)
+        
+        model = load_model()
         
         df_submit = pd.DataFrame(data=[[list_nconst, genre, decade, time, vote]], 
                                  columns=['nconst', 'genres', 'decade', 'runtimeMinutes', 'numVotes'])
-        print(df_submit)
         prediction = model.predict(df_submit)
-        print(prediction)
         return render(request, 'popularity.html', context={"genres": genres,
                                                         "actors": actors,
                                                         "directors": directors,
