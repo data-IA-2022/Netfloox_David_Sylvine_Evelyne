@@ -11,6 +11,7 @@ from sklearn import metrics
 from sklearn.decomposition import TruncatedSVD
 from sklearn.feature_extraction.text import CountVectorizer
 import os
+import pickle
 def load_model():
     parameters = {'model__n_estimators': range(140, 150, 10), 'model__max_depth': range(6,7)}
     df = pd.read_csv('data/basics_knownForTitles_ratings.csv', index_col=0)
@@ -101,11 +102,14 @@ def pop(request):
                        nconst_dir['nconst'].iat[0],]
         list_nconst = ' '.join(list_nconst)
         
-        model = load_model()
+         # model = load_model()
+        pickle_file = open("model.pkl", "rb")
+        model = pickle.load(pickle_file)
         
         df_submit = pd.DataFrame(data=[[list_nconst, genre, decade, time, vote]], 
                                  columns=['nconst', 'genres', 'decade', 'runtimeMinutes', 'numVotes'])
         prediction = model.predict(df_submit)
+        pickle_file.close()
         return render(request, 'popularity.html', context={"genres": genres,
                                                         "actors": actors,
                                                         "directors": directors,

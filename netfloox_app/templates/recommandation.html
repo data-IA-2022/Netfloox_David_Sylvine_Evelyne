@@ -10,7 +10,7 @@
             {% csrf_token %}
             <label for="recommandation">Enter a film's title</label>
             <input type="text" name="recommandation" required>
-            <input type="submit">
+            <input type="submit" value="Submit">
             {% if len != 0 and title != "" %}
                 <p>{{ phrase }}</p>
                 <p>{{ reco | linebreaks }}</p>
