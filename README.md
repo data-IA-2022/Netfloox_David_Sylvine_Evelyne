@@ -14,3 +14,9 @@
 - sylvine : dossier d'analyse exploratoire réalisé par Sylvine
 - datasets (gitignore) : contient des fichiers csv
 - config.yaml(gitignore) : fichier de configuration
+
+## Branches :
+- main
+- David
+- Evelyne 
+- testEG
